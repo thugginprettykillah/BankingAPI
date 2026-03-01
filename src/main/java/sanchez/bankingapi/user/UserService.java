@@ -5,6 +5,8 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +16,15 @@ public class UserService {
 
     private final static Logger log = LoggerFactory.getLogger(UserService.class);
 
+    private final PasswordEncoder passwordEncoder;
+
     private UserRepository repository;
 
     @Autowired
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder)
+    {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -79,7 +85,7 @@ public class UserService {
         user.setSecondName(request.secondName());
         user.setThirdName(request.thirdName());
         user.setEmail(request.email());
-        user.setPassword(request.password());
+        user.setPassword(passwordEncoder.encode(request.password()));
         return user;
     }
 

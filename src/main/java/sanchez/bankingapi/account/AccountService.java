@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sanchez.bankingapi.user.UserEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -77,6 +78,7 @@ public class AccountService {
         accountEntity.setBalance(new BigDecimal(0));
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setAccountNumber(getAccountNumber(request));
+
 
         return accountEntity;
     }
