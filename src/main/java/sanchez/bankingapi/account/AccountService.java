@@ -1,14 +1,12 @@
-package sanchez.bankingapi.service;
+package sanchez.bankingapi.account;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sanchez.bankingapi.dto.AccountResponseDto;
-import sanchez.bankingapi.dto.CreateAccountRequestDto;
-import sanchez.bankingapi.model.AccountEntity;
-import sanchez.bankingapi.repository.AccountRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,12 +41,20 @@ public class AccountService {
         return toDto(find);
     }
 
+    @Transactional
     public AccountResponseDto addAccount(CreateAccountRequestDto request)
     {
         log.info("Called addAccount from AccountService request={}", request);
         AccountEntity accountEntity = toEntity(request);
         AccountEntity savedAccount = repository.save(accountEntity);
         return toDto(savedAccount);
+    }
+
+    @Transactional
+    public void deleteAccount(Long id) {
+        log.info("Called deleteAccount from AccountService id={}", id);
+        if (!repository.existsById(id)) throw new EntityNotFoundException("Account with id=" + id + " not found");
+        repository.deleteById(id);
     }
 
 
@@ -75,6 +81,7 @@ public class AccountService {
         return accountEntity;
     }
 
+
     private String getAccountNumber(CreateAccountRequestDto request)
     {
         StringBuilder accountNumber = new StringBuilder();
@@ -85,11 +92,7 @@ public class AccountService {
     }
 
 
-    public void deleteAccount(Long id) {
-        repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Account with id=" + id + " not found"));
-        repository.deleteById(id);
-    }
+
 }
 
 

@@ -1,4 +1,4 @@
-package sanchez.bankingapi.controller;
+package sanchez.bankingapi.account;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sanchez.bankingapi.dto.AccountResponseDto;
-import sanchez.bankingapi.dto.CreateAccountRequestDto;
-import sanchez.bankingapi.service.AccountService;
 
 import java.util.List;
 
@@ -41,7 +38,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/accounts/{id}")
     public ResponseEntity<AccountResponseDto> getAccountById(@PathVariable("id") Long id)
     {
         log.info("Called method getAccountById from accountController, id={}", id);
@@ -49,7 +46,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
 
-    @PostMapping("/create_account")
+    @PostMapping("/accounts")
     public ResponseEntity<AccountResponseDto> addAccount(@RequestBody @Valid CreateAccountRequestDto request)
     {
         log.info("Called method addAccount from accountController, request={}", request);
@@ -57,7 +54,7 @@ public class AccountController {
         return ResponseEntity.status(201).body(accountService.addAccount(request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/accounts/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable("id") Long id) {
         log.info("Called method deleteAccount from accountController, id={}", id);
         accountService.deleteAccount(id);

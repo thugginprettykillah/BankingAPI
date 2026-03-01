@@ -1,9 +1,8 @@
-package sanchez.bankingapi.repository;
+package sanchez.bankingapi.account;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import sanchez.bankingapi.model.AccountEntity;
 
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {

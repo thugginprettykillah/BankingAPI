@@ -1,4 +1,4 @@
-package sanchez.bankingapi.model;
+package sanchez.bankingapi.account;
 
 public enum AccountCurrency {
     RUB,
