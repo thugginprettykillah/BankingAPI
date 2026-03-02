@@ -2,9 +2,12 @@ package sanchez.bankingapi.user;
 
 import jakarta.persistence.*;
 import sanchez.bankingapi.account.AccountEntity;
+import sanchez.bankingapi.role.RoleEntity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +35,13 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountEntity> accounts = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable( name = "users_roles",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleEntity> roles = new HashSet<>();
 
     public UserEntity() {
     }
@@ -110,5 +120,24 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<RoleEntity> getRoles() { return roles; }
+
+    public void setRoles(Set<RoleEntity> roles) { this.roles = roles; }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserEntity that = (UserEntity) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

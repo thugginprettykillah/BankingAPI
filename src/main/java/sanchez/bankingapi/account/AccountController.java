@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -51,7 +52,10 @@ public class AccountController {
     {
         log.info("Called method addAccount from accountController, request={}", request);
 
-        return ResponseEntity.status(201).body(accountService.addAccount(request));
+        AccountResponseDto dto = accountService.addAccount(request);
+        return ResponseEntity
+                .created(URI.create("/api/accounts/" + dto.id()))
+                .body(dto);
     }
 
     @DeleteMapping("/accounts/{id}")

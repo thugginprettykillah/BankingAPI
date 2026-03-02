@@ -1,4 +1,4 @@
-package sanchez.bankingapi.config;
+package sanchez.bankingapi.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import sanchez.bankingapi.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -39,8 +38,15 @@ public class SecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/accounts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accounts/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/accounts").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/accounts/{id}").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

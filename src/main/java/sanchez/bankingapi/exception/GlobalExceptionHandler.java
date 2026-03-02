@@ -5,19 +5,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sanchez.bankingapi.dto.ErrorResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class.getName());
+
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleException(Exception exception)
@@ -34,6 +38,7 @@ public class GlobalExceptionHandler {
                 .body(errorDto);
     }
 
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleException(EntityNotFoundException exception)
     {
@@ -48,6 +53,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(errorDto);
     }
+
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleException(MethodArgumentNotValidException exception)
@@ -66,6 +73,53 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(errorDto);
+    }
+
+
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleException(EmailAlreadyExistsException exception)
+    {
+        log.error("Handle EmailAlreadyExistsException", exception);
+
+        var errorDto = new ErrorResponseDto(
+                "This Email Already Exists Error",
+                exception.getMessage(),
+                LocalDateTime.now());
+
+        return  ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(errorDto);
+    }
+
+
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleException(AuthorizationDeniedException exception)
+    {
+        log.error("Handle AuthorizationDeniedException", exception);
+
+        var errorDto = new ErrorResponseDto("You are not authorized to perform this operation", exception.getMessage(), LocalDateTime.now());
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(errorDto);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleException(UsernameNotFoundException exception)
+    {
+        log.error("Handle UsernameNotFoundException", exception);
+
+        var errorDto = new ErrorResponseDto(
+                "Username Not Found",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(errorDto);
     }
 

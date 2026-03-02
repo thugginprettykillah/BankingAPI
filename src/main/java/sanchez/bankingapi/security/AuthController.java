@@ -1,4 +1,4 @@
-package sanchez.bankingapi.controller;
+package sanchez.bankingapi.security;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sanchez.bankingapi.dto.LoginRequestDto;
 import sanchez.bankingapi.dto.LoginResponseDto;
-import sanchez.bankingapi.security.JwtUtils;
 
 @RestController
 @RequestMapping("/api")

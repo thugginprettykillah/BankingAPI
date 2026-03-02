@@ -5,11 +5,15 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sanchez.bankingapi.exception.EmailAlreadyExistsException;
+import sanchez.bankingapi.role.RoleEntity;
+import sanchez.bankingapi.role.RoleEnum;
+import sanchez.bankingapi.role.RoleRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -18,13 +22,17 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private UserRepository repository;
+    private final UserRepository userRepository;
+
+    private final RoleRepository roleRepository;
+
 
     @Autowired
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder)
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder,  RoleRepository roleRepository)
     {
-        this.repository = repository;
+        this.userRepository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
 
@@ -32,14 +40,14 @@ public class UserService {
     public List<UserResponseDto> getAllUsers()
     {
         log.info("Called getAllUsers from UserService");
-        List<UserEntity> list = repository.findAll();
+        List<UserEntity> list = userRepository.findAll();
         return list.stream().map(this::toDto).toList();
     }
 
     public UserResponseDto getUserById(Long id)
     {
         log.info("Called getUserById from UserService");
-        return toDto(repository
+        return toDto(userRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id)));
 
@@ -48,8 +56,20 @@ public class UserService {
     public UserResponseDto createUser(CreateUserRequestDto request)
     {
         log.debug("Creating user {}", request);
-        UserEntity userEntity = repository
-                .save(toEntity(request));
+
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        UserEntity userEntity = toEntity(request);
+        userEntity.setPassword(passwordEncoder.encode(request.password()));
+
+        RoleEntity userRole = roleRepository
+                .findByName(RoleEnum.ROLE_USER)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+        userEntity.setRoles(Set.of(userRole));
+
+        userRepository.save(userEntity);
         return toDto(userEntity);
 
     }
@@ -57,11 +77,11 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id)
     {
-        log.info("Deleting user with id " + id);
-        if (!repository.existsById(id)) {
+        log.info("Deleting user with id {}", id);
+        if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found with id " + id);
         }
-        repository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
 
@@ -85,8 +105,10 @@ public class UserService {
         user.setSecondName(request.secondName());
         user.setThirdName(request.thirdName());
         user.setEmail(request.email());
-        user.setPassword(passwordEncoder.encode(request.password()));
+
         return user;
+
+
     }
 
 
