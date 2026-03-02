@@ -7,22 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sanchez.bankingapi.transaction.TransferRequestDto;
+import sanchez.bankingapi.transaction.TransferResponseDto;
+import sanchez.bankingapi.transaction.TransferService;
+import sanchez.bankingapi.user.UserService;
 
 import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/accounts")
 public class AccountController {
 
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
     private final AccountService accountService;
 
+    private final TransferService transferService;
+
     @Autowired
-    public AccountController(AccountService accountService)
+    public AccountController(AccountService accountService,  TransferService transferService)
     {
         this.accountService = accountService;
+        this.transferService = transferService;
     }
 
     @GetMapping("/health")
@@ -31,7 +38,7 @@ public class AccountController {
         return "OK";
     }
 
-    @GetMapping("/accounts")
+    @GetMapping("")
     public ResponseEntity<List<AccountResponseDto>> getAllAccounts()
     {
         log.info("Called method getAccounts from accountController");
@@ -39,7 +46,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @GetMapping("/accounts/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AccountResponseDto> getAccountById(@PathVariable("id") Long id)
     {
         log.info("Called method getAccountById from accountController, id={}", id);
@@ -47,7 +54,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
 
-    @PostMapping("/accounts")
+    @PostMapping
     public ResponseEntity<AccountResponseDto> addAccount(@RequestBody @Valid CreateAccountRequestDto request)
     {
         log.info("Called method addAccount from accountController, request={}", request);
@@ -58,12 +65,18 @@ public class AccountController {
                 .body(dto);
     }
 
-    @DeleteMapping("/accounts/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable("id") Long id) {
         log.info("Called method deleteAccount from accountController, id={}", id);
         accountService.deleteAccount(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping("/transfer")
+    public ResponseEntity<TransferResponseDto> transferResponse(@RequestBody @Valid TransferRequestDto transferRequestDto) {
+        log.info("Called method transferResponse from accountController, transferRequestDto={}", transferRequestDto);
+        TransferResponseDto response = transferService.transfer(transferRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
 }

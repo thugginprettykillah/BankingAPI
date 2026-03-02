@@ -123,4 +123,36 @@ public class GlobalExceptionHandler {
                 .body(errorDto);
     }
 
+    @ExceptionHandler(TransferAmountException.class)
+    public ResponseEntity<ErrorResponseDto> handleException(TransferAmountException exception)
+    {
+        log.error("Handle Transfer Amount Error", exception);
+
+        var errorDto = new ErrorResponseDto(
+                "Transfer Amount Error",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorDto);
+    }
+
+    @ExceptionHandler(TransferDirectionException.class)
+    public ResponseEntity<ErrorResponseDto> handleException(TransferDirectionException exception)
+    {
+        log.error("Handle Transfer Direction Error", exception);
+
+        var errorDto = new ErrorResponseDto(
+                "Transfer Direction Error",
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorDto);
+    }
+
 }

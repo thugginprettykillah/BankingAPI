@@ -49,7 +49,7 @@ public class AccountService {
                         .orElseThrow(() ->
                         new EntityNotFoundException("Account with id=" + id + " not found"));
 
-        if (!find.getUser().equals(getUserByAuth())) {
+        if (!find.getUser().getId().equals(getUserByAuth().getId())) {
             throw new AuthorizationDeniedException("You are not allowed to access this account");
         }
         return toDto(find);
@@ -110,7 +110,7 @@ public class AccountService {
     {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if  (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new AuthorizationDeniedException("User is not authenticated");
         }
 

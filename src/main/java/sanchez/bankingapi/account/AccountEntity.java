@@ -1,10 +1,12 @@
 package sanchez.bankingapi.account;
 
 import jakarta.persistence.*;
+import sanchez.bankingapi.transaction.MoneyTransactionEntity;
 import sanchez.bankingapi.user.UserEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "accounts")
 @Entity
@@ -30,6 +32,12 @@ public class AccountEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @OneToMany(mappedBy = "fromAccount")
+    private List<MoneyTransactionEntity> outcomingTransactions;
+
+    @OneToMany(mappedBy = "toAccount")
+    private List<MoneyTransactionEntity> incomingTransactions;
 
     public AccountEntity() {}
 
