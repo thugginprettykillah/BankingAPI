@@ -39,17 +39,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("ADMIN", "MODERATOR", "USER")
+                        .requestMatchers(HttpMethod.POST, "/api/users").hasAnyRole("ADMIN", "MODERATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/accounts").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/accounts/{id}").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/accounts").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/accounts").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.GET, "/api/accounts/{id}").hasAnyRole("ADMIN", "MODERATOR", "USER")
+                        .requestMatchers(HttpMethod.POST, "/api/accounts").hasAnyRole("ADMIN", "MODERATOR", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/accounts/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/accounts/transfer").hasAnyRole("ADMIN", "MODERATOR", "USER")
                         .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
+                );
         return http.build();
     }
 

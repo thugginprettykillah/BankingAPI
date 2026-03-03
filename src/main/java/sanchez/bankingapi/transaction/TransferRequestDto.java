@@ -1,20 +1,24 @@
 package sanchez.bankingapi.transaction;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
 public record TransferRequestDto(
 
         @NotNull
+        @NotBlank
         Long fromAccountId,
+
         @NotNull
+        @NotBlank
         Long toAccountId,
+
         @NotNull
-        @Min(10)
+        @NotBlank
+        @Positive
         BigDecimal amount,
+
 
         String description
 ) {

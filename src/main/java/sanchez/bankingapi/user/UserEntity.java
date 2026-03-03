@@ -66,6 +66,7 @@ public class UserEntity {
         account.setUser(this);
     }
 
+
     public List<AccountEntity> getAccounts() {
         return accounts;
     }

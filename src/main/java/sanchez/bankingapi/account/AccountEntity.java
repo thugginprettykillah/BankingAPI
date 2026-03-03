@@ -49,6 +49,14 @@ public class AccountEntity {
         this.user = user;
     }
 
+    public void addIncomingTransaction(MoneyTransactionEntity moneyTransactionEntity) {
+        incomingTransactions.add(moneyTransactionEntity);
+    }
+
+    public void addOutgoingTransaction(MoneyTransactionEntity moneyTransactionEntity) {
+        outcomingTransactions.add(moneyTransactionEntity);
+    }
+
     public UserEntity getUser() {
         return user;
     }

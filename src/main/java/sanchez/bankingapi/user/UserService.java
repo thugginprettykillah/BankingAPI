@@ -78,9 +78,11 @@ public class UserService {
     public void deleteUser(Long id)
     {
         log.info("Deleting user with id {}", id);
+
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found with id " + id);
         }
+
         userRepository.deleteById(id);
     }
 

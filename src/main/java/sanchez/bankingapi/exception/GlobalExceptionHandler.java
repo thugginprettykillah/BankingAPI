@@ -107,6 +107,7 @@ public class GlobalExceptionHandler {
                 .body(errorDto);
     }
 
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleException(UsernameNotFoundException exception)
     {

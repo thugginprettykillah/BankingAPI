@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
@@ -23,7 +23,7 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUsers()
     {
         log.info("Called getAllUsers from UserController");
@@ -32,7 +32,7 @@ public class UserController {
                 .ok(service.getAllUsers());
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable("id") Long id)
     {
         log.info("Called getUserById from UserController id={}", id);
@@ -41,7 +41,7 @@ public class UserController {
                 .ok(service.getUserById(id));
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid CreateUserRequestDto request)
     {
         log.info("Called createUser from UserController request={}", request);
@@ -50,7 +50,7 @@ public class UserController {
                 .ok(service.createUser(request));
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         log.info("Called deleteUser from UserController id={}", id);
         service.deleteUser(id);

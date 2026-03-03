@@ -32,13 +32,7 @@ public class AccountController {
         this.transferService = transferService;
     }
 
-    @GetMapping("/health")
-    public String getHealth()
-    {
-        return "OK";
-    }
-
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<AccountResponseDto>> getAllAccounts()
     {
         log.info("Called method getAccounts from accountController");

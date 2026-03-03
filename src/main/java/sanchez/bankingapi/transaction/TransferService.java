@@ -41,10 +41,12 @@ public class TransferService {
         log.info("Called transfer method from TransferService....");
 
         MoneyTransactionEntity moneyTransactionEntity = new MoneyTransactionEntity();
+
         if (request.description() != null &&  !request.description().trim().isEmpty()) {
             moneyTransactionEntity.setDescription(request.description());
             log.info("Request description: " + request.description());
         }
+
         moneyTransactionEntity.setCreationDate(LocalDateTime.now());
 
         AccountEntity fromAccount = accountRepository
@@ -73,15 +75,18 @@ public class TransferService {
 
         log.info("Checking amount....");
         BigDecimal transferAmount = request.amount();
-        if (transferAmount.compareTo(BigDecimal.ZERO) < 0) {
+        if (transferAmount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new TransferAmountException("Transfer amount must be greater than zero");
         }
 
-        log.info("Transferring...");
+        if (fromAccount.getBalance().compareTo(request.amount()) < 0) {
+            throw new TransferAmountException("Not enough balance");
+        }
+
         fromAccount.setBalance(fromAccount.getBalance().subtract(transferAmount));
         toAccount.setBalance(toAccount.getBalance().add(transferAmount));
         moneyTransactionEntity.setAmount(transferAmount);
-
+        log.info("Transferring...");
 
         var status = MoneyTransactionStatus.APPROVED;
         moneyTransactionEntity.setStatus(status);
@@ -108,7 +113,7 @@ public class TransferService {
                 .stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        boolean isOwner = !userDetails.getUsername().equals(fromAccount.getUser().getEmail());
+        boolean isOwner = userDetails.getUsername().equals(fromAccount.getUser().getEmail());
         return isAdmin || isOwner;
     }
 }

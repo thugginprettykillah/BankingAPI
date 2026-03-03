@@ -45,6 +45,7 @@ public class AccountService {
     public AccountResponseDto getAccountById(Long id)
     {
         log.info("Called getAccountById from AccountService id={}", id);
+
         AccountEntity find = accountRepository.findById(id)
                         .orElseThrow(() ->
                         new EntityNotFoundException("Account with id=" + id + " not found"));

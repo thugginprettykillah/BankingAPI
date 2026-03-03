@@ -29,6 +29,7 @@ public class MoneyTransactionEntity {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private MoneyTransactionStatus status;
 
