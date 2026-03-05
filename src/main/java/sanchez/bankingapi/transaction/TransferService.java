@@ -18,6 +18,7 @@ import sanchez.bankingapi.exception.TransferDirectionException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 public class TransferService {
@@ -111,7 +112,7 @@ public class TransferService {
         boolean isAdmin = userDetails
                 .getAuthorities()
                 .stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"));
 
         boolean isOwner = userDetails.getUsername().equals(fromAccount.getUser().getEmail());
         return isAdmin || isOwner;

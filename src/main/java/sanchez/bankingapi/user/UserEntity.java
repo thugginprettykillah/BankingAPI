@@ -1,6 +1,9 @@
 package sanchez.bankingapi.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import sanchez.bankingapi.account.AccountEntity;
 import sanchez.bankingapi.role.RoleEntity;
 
@@ -11,6 +14,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
 public class UserEntity {
 
     @Id
@@ -43,9 +49,6 @@ public class UserEntity {
     )
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public UserEntity() {
-    }
-
     public UserEntity(String firstName, String secondName, String email, String password) {
         this.firstName = firstName;
         this.secondName = secondName;
@@ -66,66 +69,6 @@ public class UserEntity {
         account.setUser(this);
     }
 
-
-    public List<AccountEntity> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<AccountEntity> accounts) {
-        this.accounts = accounts;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getThirdName() {
-        return thirdName;
-    }
-
-    public void setThirdName(String thirdName) {
-        this.thirdName = thirdName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<RoleEntity> getRoles() { return roles; }
-
-    public void setRoles(Set<RoleEntity> roles) { this.roles = roles; }
 
     @Override
     public boolean equals(Object o)

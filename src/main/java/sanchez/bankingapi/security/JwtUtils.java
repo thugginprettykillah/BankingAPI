@@ -41,7 +41,7 @@ public class JwtUtils {
     
     public String getUsernameFromJwtToken(String token)
     {
-        log.info("Getting username from token: {}", token);
+        log.info("Getting username from token");
 
         JwtParser parser = Jwts
                 .parser()

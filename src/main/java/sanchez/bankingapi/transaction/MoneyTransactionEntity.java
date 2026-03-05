@@ -1,6 +1,9 @@
 package sanchez.bankingapi.transaction;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import sanchez.bankingapi.account.AccountEntity;
 
 import java.math.BigDecimal;
@@ -8,12 +11,14 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
+@Getter
+@Setter
+@NoArgsConstructor
 public class MoneyTransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @JoinColumn(name = "from_account_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,66 +40,4 @@ public class MoneyTransactionEntity {
 
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
-
-
-
-
-    public MoneyTransactionEntity() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public AccountEntity getFromAccount() {
-        return fromAccount;
-    }
-
-    public void setFromAccount(AccountEntity fromAccount) {
-        this.fromAccount = fromAccount;
-    }
-
-    public AccountEntity getToAccount() {
-        return toAccount;
-    }
-
-    public void setToAccount(AccountEntity toAccount) {
-        this.toAccount = toAccount;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public MoneyTransactionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(MoneyTransactionStatus status) {
-        this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
 }

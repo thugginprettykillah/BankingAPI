@@ -5,12 +5,18 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sanchez.bankingapi.exception.EmailAlreadyExistsException;
 import sanchez.bankingapi.role.RoleEntity;
 import sanchez.bankingapi.role.RoleEnum;
 import sanchez.bankingapi.role.RoleRepository;
+import sanchez.bankingapi.security.RegistrationRequestDto;
+import sanchez.bankingapi.security.RegistrationResponseDto;
 
 import java.util.List;
 import java.util.Set;
@@ -47,6 +53,11 @@ public class UserService {
     public UserResponseDto getUserById(Long id)
     {
         log.info("Called getUserById from UserService");
+
+        if (!getUserByAuth().getId().equals(id)) {
+            throw new AuthorizationDeniedException("You are not allowed to access this resource");
+        }
+
         return toDto(userRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id)));
@@ -55,7 +66,7 @@ public class UserService {
     @Transactional
     public UserResponseDto createUser(CreateUserRequestDto request)
     {
-        log.debug("Creating user {}", request);
+        log.debug("Creating user method by request {}", request);
 
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new EmailAlreadyExistsException("Email already exists");
@@ -71,7 +82,27 @@ public class UserService {
 
         userRepository.save(userEntity);
         return toDto(userEntity);
+    }
 
+    @Transactional
+    public RegistrationResponseDto createUser(RegistrationRequestDto request)
+    {
+        log.debug("Registration user method {}", request);
+
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        UserEntity userEntity = toEntity(request);
+        userEntity.setPassword(passwordEncoder.encode(request.password()));
+
+        RoleEntity userRole = roleRepository
+                .findByName(RoleEnum.ROLE_USER)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+        userEntity.setRoles(Set.of(userRole));
+
+        var saved = userRepository.save(userEntity);
+        return new RegistrationResponseDto(saved.getId());
     }
 
     @Transactional
@@ -87,8 +118,6 @@ public class UserService {
     }
 
 
-
-
     private UserResponseDto toDto(UserEntity user)
     {
         return new UserResponseDto(
@@ -100,6 +129,8 @@ public class UserService {
         );
     }
 
+
+
     private UserEntity toEntity(CreateUserRequestDto request)
     {
         UserEntity user = new UserEntity();
@@ -110,9 +141,35 @@ public class UserService {
 
         return user;
 
-
     }
 
+    private UserEntity toEntity(RegistrationRequestDto request)
+    {
+        UserEntity user = new UserEntity();
+        user.setFirstName(request.firstName());
+        user.setSecondName(request.secondName());
+        user.setThirdName(request.thirdName());
+        user.setEmail(request.email());
+        return user;
+    }
 
+    private UserEntity getUserByAuth()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthorizationDeniedException("User is not authenticated");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        return userRepository
+                .findByEmail(userDetails.getUsername())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User with email="
+                                + authentication.getName()
+                                + " not found")
+                );
+    };
 
 }
