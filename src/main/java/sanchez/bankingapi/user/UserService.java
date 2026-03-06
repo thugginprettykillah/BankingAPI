@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,7 +57,7 @@ public class UserService {
     {
         log.info("Called getUserById from UserService");
 
-        if (!getUserByAuth().getId().equals(id)) {
+        if (!hasPrivilegedRole() && !getUserByAuth().getId().equals(id)) {
             throw new AuthorizationDeniedException("You are not allowed to access this resource");
         }
 
@@ -153,6 +154,22 @@ public class UserService {
         user.setThirdName(request.thirdName());
         user.setEmail(request.email());
         return user;
+    }
+
+    private boolean hasPrivilegedRole()
+    {
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(
+                        authority -> authority.equals("ROLE_ADMIN") || authority.equals("ROLE_MODERATOR")
+                );
     }
 
     private UserEntity getUserByAuth()

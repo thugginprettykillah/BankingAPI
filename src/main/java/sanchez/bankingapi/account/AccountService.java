@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class AccountService {
                         .orElseThrow(() ->
                         new EntityNotFoundException("Account with id=" + id + " not found"));
 
-        if (!find.getUser().getId().equals(getUserByAuth().getId())) {
+        if (!hasPrivilegedRole() && !find.getUser().getId().equals(getUserByAuth().getId())) {
             throw new AuthorizationDeniedException("You are not allowed to access this account");
         }
         return toDto(find);
@@ -106,6 +107,22 @@ public class AccountService {
         accountNumber.append("-");
         accountNumber.append(accountRepository.getNextAccountNumber());
         return accountNumber.toString();
+    }
+
+    private boolean hasPrivilegedRole()
+    {
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(
+                        authority -> authority.equals("ROLE_ADMIN") || authority.equals("ROLE_MODERATOR")
+                );
     }
 
     private UserEntity getUserByAuth()

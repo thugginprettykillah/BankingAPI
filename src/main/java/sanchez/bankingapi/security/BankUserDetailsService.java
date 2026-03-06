@@ -34,7 +34,7 @@ public class BankUserDetailsService implements UserDetailsService {
         log.info("Called loadUserByUsername from BankUserDetailsService for username: {}", username);
 
         UserEntity user = repository
-                .findByEmail(username)
+                .findByEmailWithRoles(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         List<GrantedAuthority> authorities = user.getRoles().stream()
