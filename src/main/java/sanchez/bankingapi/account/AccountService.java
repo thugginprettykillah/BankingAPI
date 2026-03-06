@@ -10,13 +10,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import sanchez.bankingapi.dto.AccountResponseDto;
+import sanchez.bankingapi.dto.CreateAccountRequestDto;
 import sanchez.bankingapi.user.UserEntity;
 import sanchez.bankingapi.user.UserRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountService {

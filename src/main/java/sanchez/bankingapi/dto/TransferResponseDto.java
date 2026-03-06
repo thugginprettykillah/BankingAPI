@@ -1,7 +1,8 @@
-package sanchez.bankingapi.transaction;
+package sanchez.bankingapi.dto;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import sanchez.bankingapi.transaction.MoneyTransactionStatus;
 
 @Schema(description = "Transfer response information")
 public record TransferResponseDto(

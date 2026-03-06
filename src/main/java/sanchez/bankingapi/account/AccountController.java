@@ -11,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sanchez.bankingapi.transaction.TransferRequestDto;
-import sanchez.bankingapi.transaction.TransferResponseDto;
+import sanchez.bankingapi.dto.AccountResponseDto;
+import sanchez.bankingapi.dto.CreateAccountRequestDto;
+import sanchez.bankingapi.dto.TransferRequestDto;
+import sanchez.bankingapi.dto.TransferResponseDto;
 import sanchez.bankingapi.transaction.TransferService;
-import sanchez.bankingapi.user.UserService;
 
 import java.net.URI;
 import java.util.List;

@@ -1,6 +1,8 @@
 package sanchez.bankingapi.user;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sanchez.bankingapi.dto.CreateUserRequestDto;
+import sanchez.bankingapi.dto.ErrorResponseDto;
+import sanchez.bankingapi.dto.UserResponseDto;
 
 import java.util.List;
 
@@ -21,9 +26,9 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final static Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private UserService service;
+    private final UserService service;
 
     @Autowired
     public UserController(UserService service) {
@@ -35,7 +40,10 @@ public class UserController {
             description = "Returns all users")
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "", description = "")
+            @ApiResponse(responseCode = "200", description = "Users list returned"),
+            @ApiResponse(responseCode = "403", description = "Access denied",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+
     })
     public ResponseEntity<List<UserResponseDto>> getAllUsers()
     {
@@ -50,7 +58,12 @@ public class UserController {
             description = "Returns user by id")
     @GetMapping("/{id}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "", description = "")
+            @ApiResponse(responseCode = "200", description = "User returned by id"),
+            @ApiResponse(responseCode = "403", description = "Access denied",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable("id") Long id)
     {
@@ -61,26 +74,41 @@ public class UserController {
     }
 
 
-    @Operation(summary = "Create",
-            description = "Returns info about created user")
+    @Operation(summary = "Create user",
+            description = "Creates user and returns it")
     @PostMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "", description = "")
+            @ApiResponse(responseCode = "", description = ""),
+            @ApiResponse(responseCode = "201", description = "User created",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Validation error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "409", description = "Email already exists",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+
     })
     public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid CreateUserRequestDto request)
     {
         log.info("Called createUser from UserController request={}", request);
 
         return ResponseEntity
-                .ok(service.createUser(request));
+                .status(HttpStatus.CREATED)
+                .body(service.createUser(request));
     }
 
 
     @Operation(summary = "Delete user",
-            description = "User deleting from database")
+            description = "Delete user from database")
     @DeleteMapping("/{id}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "", description = "")
+            @ApiResponse(responseCode = "204", description = "User deleted"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+
     })
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         log.info("Called deleteUser from UserController id={}", id);

@@ -1,11 +1,14 @@
 package sanchez.bankingapi.security;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sanchez.bankingapi.dto.*;
 import sanchez.bankingapi.user.UserService;
 
 @Tag(name = "Authentication",
@@ -34,11 +38,12 @@ public class AuthController {
     }
 
     @Operation(summary = "Login",
-            description = "Login request")
+            description = "Login by email/password and return JWT")
     @PostMapping("/login")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "", description = ""),
-            @ApiResponse(responseCode = "", description = "")
+            @ApiResponse(responseCode = "200", description = "Login successful"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials",
+                        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto request) throws Exception
     {
@@ -53,15 +58,19 @@ public class AuthController {
     }
 
     @Operation(summary = "Register",
-            description = "Registration request")
+            description = "Register a new user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "", description = ""),
-            @ApiResponse(responseCode = "", description = "")
+            @ApiResponse(responseCode = "201", description = "User registered"),
+            @ApiResponse(responseCode = "400", description = "Validation error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+            ),
+            @ApiResponse(responseCode = "409", description = "Email already exists",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PostMapping("/signup")
     public ResponseEntity<RegistrationResponseDto> register(@RequestBody @Valid RegistrationRequestDto request)
     {
         RegistrationResponseDto responseDto = userService.createUser(request);
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 }

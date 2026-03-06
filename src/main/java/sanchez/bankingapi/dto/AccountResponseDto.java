@@ -1,6 +1,7 @@
-package sanchez.bankingapi.account;
+package sanchez.bankingapi.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import sanchez.bankingapi.account.AccountCurrency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
