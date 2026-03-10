@@ -93,6 +93,7 @@ public class TransferService {
 
         var status = MoneyTransactionStatus.APPROVED;
         moneyTransactionEntity.setStatus(status);
+
         var saved = moneyTransactionRepository.save(moneyTransactionEntity);
         var message = "Transfer successful";
 

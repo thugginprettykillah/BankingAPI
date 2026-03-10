@@ -5,6 +5,8 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,11 +48,11 @@ public class UserService {
 
 
 
-    public List<UserResponseDto> getAllUsers()
+    public Page<UserResponseDto> getAllUsers(Pageable pageable)
     {
         log.info("Called getAllUsers from UserService");
-        List<UserEntity> list = userRepository.findAll();
-        return list.stream().map(this::toDto).toList();
+        Page<UserEntity> page = userRepository.findAll(pageable);
+        return page.map(this::toDto);
     }
 
     public UserResponseDto getUserById(Long id)
