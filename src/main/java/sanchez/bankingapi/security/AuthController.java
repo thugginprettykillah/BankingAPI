@@ -17,7 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sanchez.bankingapi.dto.*;
+import sanchez.bankingapi.dto.authentication.LoginRequestDto;
+import sanchez.bankingapi.dto.authentication.LoginResponseDto;
+import sanchez.bankingapi.dto.authentication.RegistrationRequestDto;
+import sanchez.bankingapi.dto.authentication.RegistrationResponseDto;
+import sanchez.bankingapi.dto.exception.ErrorResponseDto;
 import sanchez.bankingapi.user.UserService;
 
 @Tag(name = "Authentication",

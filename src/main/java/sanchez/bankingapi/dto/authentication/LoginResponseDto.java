@@ -1,4 +1,4 @@
-package sanchez.bankingapi.dto;
+package sanchez.bankingapi.dto.authentication;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

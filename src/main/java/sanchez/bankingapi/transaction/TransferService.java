@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sanchez.bankingapi.account.AccountEntity;
 import sanchez.bankingapi.account.AccountRepository;
-import sanchez.bankingapi.dto.TransferRequestDto;
-import sanchez.bankingapi.dto.TransferResponseDto;
+import sanchez.bankingapi.dto.transaction.TransferRequestDto;
+import sanchez.bankingapi.dto.transaction.TransferResponseDto;
 import sanchez.bankingapi.exception.TransferAmountException;
 import sanchez.bankingapi.exception.TransferDirectionException;
 

@@ -8,13 +8,16 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sanchez.bankingapi.dto.AccountResponseDto;
-import sanchez.bankingapi.dto.CreateAccountRequestDto;
-import sanchez.bankingapi.dto.TransferRequestDto;
-import sanchez.bankingapi.dto.TransferResponseDto;
+import sanchez.bankingapi.dto.account.AccountResponseDto;
+import sanchez.bankingapi.dto.account.CreateAccountRequestDto;
+import sanchez.bankingapi.dto.transaction.TransferRequestDto;
+import sanchez.bankingapi.dto.transaction.TransferResponseDto;
 import sanchez.bankingapi.transaction.TransferService;
 
 import java.net.URI;
@@ -48,11 +51,11 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "List of accounts"),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    public ResponseEntity<List<AccountResponseDto>> getAllAccounts()
+    public ResponseEntity<Page<AccountResponseDto>> getAllAccounts(@PageableDefault(size = 20, sort = "id") Pageable pageable)
     {
         log.info("Called method getAccounts from accountController");
 
-        return ResponseEntity.ok(accountService.getAllAccounts());
+        return ResponseEntity.ok(accountService.getAllAccounts(pageable));
     }
 
     @GetMapping("/{id}")

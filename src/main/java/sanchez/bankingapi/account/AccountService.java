@@ -5,14 +5,16 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import sanchez.bankingapi.dto.AccountResponseDto;
-import sanchez.bankingapi.dto.CreateAccountRequestDto;
+import sanchez.bankingapi.dto.account.AccountResponseDto;
+import sanchez.bankingapi.dto.account.CreateAccountRequestDto;
 import sanchez.bankingapi.user.UserEntity;
 import sanchez.bankingapi.user.UserRepository;
 
@@ -37,11 +39,11 @@ public class AccountService {
 
 
 
-    public List<AccountResponseDto> getAllAccounts()
+    public Page<AccountResponseDto> getAllAccounts(Pageable pageable)
     {
         log.info("Called getAllAccounts from AccountService");
-        List<AccountEntity> accountEntities = accountRepository.findAll();
-        return accountEntities.stream().map(this::toDto).toList();
+        Page<AccountEntity> page = accountRepository.findAll(pageable);
+        return page.map(this::toDto);
     }
 
     public AccountResponseDto getAccountById(Long id)

@@ -1,4 +1,4 @@
-package sanchez.bankingapi.dto;
+package sanchez.bankingapi.dto.account;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import sanchez.bankingapi.account.AccountCurrency;

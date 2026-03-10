@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sanchez.bankingapi.dto.ErrorResponseDto;
+import sanchez.bankingapi.dto.exception.ErrorResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

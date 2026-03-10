@@ -12,14 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sanchez.bankingapi.dto.CreateUserRequestDto;
-import sanchez.bankingapi.dto.ErrorResponseDto;
-import sanchez.bankingapi.dto.UserResponseDto;
-
-import java.util.List;
+import sanchez.bankingapi.dto.user.CreateUserRequestDto;
+import sanchez.bankingapi.dto.exception.ErrorResponseDto;
+import sanchez.bankingapi.dto.user.UserResponseDto;
 
 
 @Tag(name = "Users",
@@ -41,13 +40,14 @@ public class UserController {
     @Operation(summary = "Get all users",
             description = "Returns all users")
     @GetMapping
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Users list returned"),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
 
     })
-    public ResponseEntity<Page<UserResponseDto>> getAllUsers(Pageable pageable)
+    public ResponseEntity<Page<UserResponseDto>> getAllUsers(@PageableDefault(size = 20, sort = "id") Pageable pageable)
     {
         log.info("Called getAllUsers from UserController");
 

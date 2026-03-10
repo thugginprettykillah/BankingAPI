@@ -14,16 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sanchez.bankingapi.dto.CreateUserRequestDto;
-import sanchez.bankingapi.dto.UserResponseDto;
+import sanchez.bankingapi.dto.user.CreateUserRequestDto;
+import sanchez.bankingapi.dto.user.UserResponseDto;
 import sanchez.bankingapi.exception.EmailAlreadyExistsException;
 import sanchez.bankingapi.role.RoleEntity;
 import sanchez.bankingapi.role.RoleEnum;
 import sanchez.bankingapi.role.RoleRepository;
-import sanchez.bankingapi.dto.RegistrationRequestDto;
-import sanchez.bankingapi.dto.RegistrationResponseDto;
+import sanchez.bankingapi.dto.authentication.RegistrationRequestDto;
+import sanchez.bankingapi.dto.authentication.RegistrationResponseDto;
 
-import java.util.List;
 import java.util.Set;
 
 @Service
