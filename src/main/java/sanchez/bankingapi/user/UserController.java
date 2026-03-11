@@ -47,12 +47,16 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
 
     })
-    public ResponseEntity<Page<UserResponseDto>> getAllUsers(@PageableDefault(size = 20, sort = "id") Pageable pageable)
+    public ResponseEntity<Page<UserResponseDto>> getAllUsers(
+            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @RequestParam(required = false) Long roleId,
+            @RequestParam(required = false) String emailLike
+    )
     {
         log.info("Called getAllUsers from UserController");
 
         return ResponseEntity
-                .ok(service.getAllUsers(pageable));
+                .ok(service.getAllUsers(pageable, roleId, emailLike));
     }
 
 
