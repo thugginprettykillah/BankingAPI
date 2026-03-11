@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,10 +48,25 @@ public class UserService {
 
 
 
-    public Page<UserResponseDto> getAllUsers(Pageable pageable)
+    public Page<UserResponseDto> getAllUsers(Pageable pageable, Long roleId, String emailLike)
     {
         log.info("Called getAllUsers from UserService");
-        Page<UserEntity> page = userRepository.findAll(pageable);
+
+        Specification<UserEntity> specification = Specification
+                .where((Specification<UserEntity>) null);
+
+        if (roleId != null) {
+            specification = specification
+                    .and(UserSpecification.hasRoleId(roleId));
+        }
+
+        if (emailLike != null) {
+            specification = specification
+                    .and(UserSpecification.emailContains(emailLike));
+        }
+
+        Page<UserEntity> page = userRepository.findAll(specification, pageable);
+
         return page.map(this::toDto);
     }
 
