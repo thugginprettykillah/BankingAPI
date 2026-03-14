@@ -1,6 +1,7 @@
 package sanchez.bankingapi.user;
 
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 import sanchez.bankingapi.role.RoleEntity;
 
@@ -13,7 +14,8 @@ public class UserSpecification {
                 return criteriaBuilder.conjunction();
             }
 
-            Join<UserEntity, RoleEntity> roles = root.join("roles");
+            criteriaQuery.distinct(true);  
+            Join<UserEntity, RoleEntity> roles = root.join("roles", JoinType.LEFT);
             return criteriaBuilder.equal(roles.get("id"), roleId);
         };
     }

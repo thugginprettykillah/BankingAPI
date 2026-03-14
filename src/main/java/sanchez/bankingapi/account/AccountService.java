@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,10 +40,15 @@ public class AccountService {
 
 
 
-    public Page<AccountResponseDto> getAllAccounts(Pageable pageable)
+    public Page<AccountResponseDto> getAllAccounts(Pageable pageable, String numberLike, String currency)
     {
         log.info("Called getAllAccounts from AccountService");
-        Page<AccountEntity> page = accountRepository.findAll(pageable);
+        Specification<AccountEntity> spec = Specification
+                .where(AccountSpecification.accountNumberLike(numberLike))
+                .and(AccountSpecification.hasCurrency(currency));
+
+        Page<AccountEntity> page = accountRepository.findAll(spec, pageable);
+
         return page.map(this::toDto);
     }
 
@@ -58,6 +64,26 @@ public class AccountService {
             throw new AuthorizationDeniedException("You are not allowed to access this account");
         }
         return toDto(find);
+    }
+
+    public Page<AccountResponseDto> getAccountsByUserId(Pageable pageable, Long userId, String currency)
+    {
+        log.info("Called getAccountsByUserId from AccountService id={}", userId);
+
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("Account with id=" + userId + " not found");
+        }
+        if (!hasPrivilegedRole() && !getUserByAuth().getId().equals(userId)) {
+            throw new AuthorizationDeniedException("You are not allowed to access this page");
+        }
+
+        Specification<AccountEntity> spec = Specification
+                .where(AccountSpecification.hasUserId(userId))
+                .and(AccountSpecification.hasCurrency(currency));
+
+        Page<AccountEntity> accountEntityPage = accountRepository.findAll(spec, pageable);
+
+        return accountEntityPage.map(this::toDto);
     }
 
     @Transactional

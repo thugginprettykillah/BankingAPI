@@ -51,11 +51,15 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "List of accounts"),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    public ResponseEntity<Page<AccountResponseDto>> getAllAccounts(@PageableDefault(size = 20, sort = "id") Pageable pageable)
+    public ResponseEntity<Page<AccountResponseDto>> getAllAccounts(
+            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @RequestParam(required = false) String numberLike,
+            @RequestParam(required = false) String currency
+    )
     {
         log.info("Called method getAccounts from accountController");
 
-        return ResponseEntity.ok(accountService.getAllAccounts(pageable));
+        return ResponseEntity.ok(accountService.getAllAccounts(pageable, numberLike, currency));
     }
 
     @GetMapping("/{id}")
@@ -72,6 +76,26 @@ public class AccountController {
 
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
+
+    @GetMapping("/my")
+    @Operation(summary = "Get accounts by user id",
+                description = "Returns user`s accounts")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Returns accounts"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Accounts or user not found")
+    })
+    public ResponseEntity<Page<AccountResponseDto>> getAccountByUserId(
+            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @RequestParam(required = true) Long userId,
+            @RequestParam(required = false) String currency)
+    {
+        log.info("Called method getAccountByUserId from accountController, userId={}", userId);
+
+        return ResponseEntity.ok(accountService.getAccountsByUserId(pageable, userId, currency));
+    }
+
+
 
     @PostMapping
     @Operation(summary = "Add account",

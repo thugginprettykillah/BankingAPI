@@ -53,17 +53,8 @@ public class UserService {
         log.info("Called getAllUsers from UserService");
 
         Specification<UserEntity> specification = Specification
-                .where((Specification<UserEntity>) null);
-
-        if (roleId != null) {
-            specification = specification
-                    .and(UserSpecification.hasRoleId(roleId));
-        }
-
-        if (emailLike != null) {
-            specification = specification
-                    .and(UserSpecification.emailContains(emailLike));
-        }
+                .where(UserSpecification.hasRoleId(roleId))
+                .and(UserSpecification.emailContains(emailLike));
 
         Page<UserEntity> page = userRepository.findAll(specification, pageable);
 
