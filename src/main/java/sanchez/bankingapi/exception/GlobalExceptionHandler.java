@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 
         var errorDto = new ErrorResponseDto(
                 "Internal Server Error :(",
-                exception.getMessage(),
+                "We working on this problem. Please try again later.",
                 LocalDateTime.now());
 
         return ResponseEntity

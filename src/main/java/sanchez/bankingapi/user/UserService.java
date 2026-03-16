@@ -91,7 +91,7 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Role not found"));
         userEntity.setRoles(Set.of(userRole));
 
-        userRepository.save(userEntity);
+        userEntity = userRepository.save(userEntity);
         return toDto(userEntity);
     }
 
@@ -129,7 +129,7 @@ public class UserService {
     }
 
 
-    private UserResponseDto toDto(UserEntity user)
+    UserResponseDto toDto(UserEntity user)
     {
         return new UserResponseDto(
                 user.getId(),

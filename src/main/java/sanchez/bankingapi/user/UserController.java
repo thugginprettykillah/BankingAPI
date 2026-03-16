@@ -97,7 +97,7 @@ public class UserController {
     })
     public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid CreateUserRequestDto request)
     {
-        log.info("Called createUser from UserController request={}", request);
+        log.info("Called createUser from UserController request={}", request.email());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
